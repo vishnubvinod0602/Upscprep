@@ -10,7 +10,7 @@ import {
 } from "./firebase.js";
 
 /*************************************************
- * 🔐 EXPOSE LOGIN TO HTML (CRITICAL FIX)
+ * 🔐 EXPOSE FUNCTIONS TO HTML (CRITICAL)
  *************************************************/
 window.login = firebaseLogin;
 console.log("LOGIN FUNCTION ATTACHED");
@@ -88,7 +88,10 @@ function getNextChapter(subject) {
   return null;
 }
 
-function markDone(subject, chapter) {
+/*************************************************
+ * ✅ FIX: markDone ATTACHED TO window
+ *************************************************/
+window.markDone = function (subject, chapter) {
   progress[subject] = progress[subject] || {};
 
   if (!progress[subject][chapter]) {
@@ -103,7 +106,9 @@ function markDone(subject, chapter) {
   localStorage.setItem("progress", JSON.stringify(progress));
   if (uid) saveProgress(uid, progress);
   renderToday();
-}
+};
+
+console.log("markDone attached to window");
 
 /*************************************************
  * VIEWS
@@ -149,7 +154,7 @@ function renderToday() {
 
 function renderPlan() {
   document.getElementById("viewContainer").innerHTML =
-    "<h3>Plan</h3><p>Follow daily schedule and complete chapters shown.</p>";
+    "<h3>Plan</h3><p>Follow the daily plan shown.</p>";
 }
 
 function renderCheckin() {
@@ -164,7 +169,7 @@ function renderAnalytics() {
   Object.keys(progress).forEach(subject => {
     v.innerHTML += `
       <div class="card">
-        ${subject}: ${Object.keys(progress[subject]).length} chapters done
+        ${subject}: ${Object.keys(progress[subject]).length} chapters completed
       </div>
     `;
   });
