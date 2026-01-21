@@ -123,6 +123,7 @@ window.markDone = function (subject, chapter) {
 function renderToday() {
   const v = document.getElementById("viewContainer");
   v.innerHTML = "<h3>Today’s Plan</h3>";
+  console.log("Rendering Today", todaySubjects(), SYLLABUS);
 
   if (isTravelDay()) {
     v.innerHTML += `<div class="card"><b>Travel Day</b><br>Light reading only.</div>`;
