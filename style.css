@@ -1,94 +1,48 @@
-/* ===== GLOBAL ===== */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  background: #F3F7FB;
   margin: 0;
-  padding: 16px;
-  color: #1F2937;
+  padding: 16px 16px 90px;
+  font-family: system-ui, -apple-system;
+  background: #f3f7fb;
+  color: #1f2937;
 }
 
-/* ===== HEADER ===== */
-header {
-  background: linear-gradient(135deg, #2563EB, #7C3AED);
+.header {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
   color: white;
-  border-radius: 12px;
   padding: 16px;
-  margin-bottom: 20px;
+  border-radius: 14px;
+  margin-bottom: 16px;
 }
 
-header h2 {
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-header p {
-  margin: 4px 0 12px;
-  opacity: 0.9;
-}
-
-header button {
-  background: rgba(255,255,255,0.2);
-  border: none;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-}
-
-/* ===== CARDS ===== */
 .card {
   background: white;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 14px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
 }
 
-/* ===== TASK ITEMS ===== */
-.task {
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  background: #F9FAFB;
-}
-
-/* ===== BUTTONS ===== */
 button {
   padding: 6px 12px;
-  margin: 4px 4px 0 0;
+  margin: 4px;
   border-radius: 8px;
   border: none;
-  font-size: 0.9rem;
+  background: #e5e7eb;
 }
 
-/* Done */
-.btn-done {
-  background: #16A34A;
+button.done {
+  background: #16a34a;
   color: white;
 }
 
-/* Partial */
-.btn-partial {
-  background: #F59E0B;
-  color: white;
-}
-
-/* Skip */
-.btn-skip {
-  background: #DC2626;
-  color: white;
-}
-
-/* Neutral buttons */
-.btn-neutral {
-  background: #E5E7EB;
-  color: #374151;
-}
-
-/* ===== INPUTS ===== */
-input, select {
-  width: 100%;
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid #D1D5DB;
-  margin-top: 6px;
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 10px 0;
 }
