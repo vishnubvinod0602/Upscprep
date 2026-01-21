@@ -1,0 +1,5 @@
+
+body { font-family: system-ui, sans-serif; background:#fafafa; padding:16px; color:#1f2937; }
+.card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-bottom:16px; }
+button { margin:4px; padding:6px 12px; border-radius:6px; border:1px solid #d1d5db; background:#fff; }
+button:hover { background:#2563eb; color:white; }

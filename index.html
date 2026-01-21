@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UPSC Prelims Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="card">
+  <h2 id="date"></h2>
+  <p id="phase"></p>
+  <button onclick="toggleTravelMode()">Travel Mode: <span id="travelStatus"></span></button>
+</header>
+
+<section id="tasks" class="card"></section>
+
+<section id="notes" class="card">
+  <h3>Notes quality?</h3>
+  <button onclick="saveNotes('Good')">Good</button>
+  <button onclick="saveNotes('ReadOnly')">Read only</button>
+  <button onclick="saveNotes('Poor')">Poor</button>
+</section>
+
+<section id="checkin" class="card">
+  <h3>How was today?</h3>
+  <button onclick="checkIn('Good')">Good</button>
+  <button onclick="checkIn('Average')">Average</button>
+  <button onclick="checkIn('Poor')">Poor</button>
+</section>
+
+<section id="review" class="card" style="display:none">
+  <h3>Weekly Review</h3>
+  <label>Days studied:</label>
+  <input type="number" id="daysStudied" min="0" max="6">
+  <label>Weak subject:</label>
+  <select id="weakSubject">
+    <option>Polity</option><option>History</option><option>Geography</option>
+    <option>Economy</option><option>Environment</option><option>Science</option>
+  </select>
+  <button onclick="saveWeeklyReview()">Save</button>
+</section>
+
+<script src="syllabus.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
