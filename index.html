@@ -16,31 +16,20 @@
 
 <body>
 
-  <!-- HEADER -->
+ <body>
+
   <header class="header">
     <h2>UPSC Prelims Control</h2>
     <div id="authStatus">🔴 Not logged in</div>
   </header>
 
-  <!-- MAIN CONTENT -->
-  <main id="viewContainer">
-    <!-- Daily plan renders here -->
-  </main>
+  <!-- THIS IS CRITICAL -->
+  <main id="viewContainer"></main>
 
-  <!-- BOTTOM NAVIGATION -->
   <nav class="bottom-nav">
     <button onclick="showView('today')">Today</button>
-    <button onclick="showView('plan')">Plan</button>
-    <button onclick="showView('checkin')">Check-in</button>
-    <button onclick="showView('analytics')">Analytics</button>
     <button onclick="login()">Login</button>
-    <button onclick="enableNotifications()">Notify</button>
   </nav>
-
-  <!-- SCRIPTS (ORDER MATTERS) -->
-  <script type="module" src="syllabus.js"></script>
-  <script type="module" src="firebase.js"></script>
-  <script type="module" src="app.js"></script>
 
 </body>
 </html>
