@@ -1,5 +1,94 @@
+/* ===== GLOBAL ===== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: #F3F7FB;
+  margin: 0;
+  padding: 16px;
+  color: #1F2937;
+}
 
-body { font-family: system-ui, sans-serif; background:#fafafa; padding:16px; color:#1f2937; }
-.card { background:#fff; border:1px solid #e5e7eb; border-radius:8px; padding:12px; margin-bottom:16px; }
-button { margin:4px; padding:6px 12px; border-radius:6px; border:1px solid #d1d5db; background:#fff; }
-button:hover { background:#2563eb; color:white; }
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(135deg, #2563EB, #7C3AED);
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+header p {
+  margin: 4px 0 12px;
+  opacity: 0.9;
+}
+
+header button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* ===== TASK ITEMS ===== */
+.task {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: #F9FAFB;
+}
+
+/* ===== BUTTONS ===== */
+button {
+  padding: 6px 12px;
+  margin: 4px 4px 0 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+}
+
+/* Done */
+.btn-done {
+  background: #16A34A;
+  color: white;
+}
+
+/* Partial */
+.btn-partial {
+  background: #F59E0B;
+  color: white;
+}
+
+/* Skip */
+.btn-skip {
+  background: #DC2626;
+  color: white;
+}
+
+/* Neutral buttons */
+.btn-neutral {
+  background: #E5E7EB;
+  color: #374151;
+}
+
+/* ===== INPUTS ===== */
+input, select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #D1D5DB;
+  margin-top: 6px;
+}

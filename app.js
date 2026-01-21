@@ -1,4 +1,10 @@
 
+const div = document.createElement("div");
+div.className = "task";
+div.innerHTML = `
+  <strong>${subject}</strong><br>
+  ${ch.chapter} <em>(${ch.book})</em>
+`;
 document.getElementById("date").innerText = new Date().toDateString();
 
 const phase = new Date() >= new Date("2026-03-15") ?
