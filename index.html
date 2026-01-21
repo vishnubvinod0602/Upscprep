@@ -1,37 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>UPSC Prelims Control</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#4f46e5" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
 </head>
+
 <body>
 
-<header id="appHeader" class="header">
-  <h2>UPSC Prelims Control</h2>
-  <!-- 🔐 LOGIN STATUS -->
-  <div id="authStatus" style="margin-top:8px;font-size:14px;">
-    🔴 Not logged in
-  </div>
-</header>
+  <!-- HEADER -->
+  <header class="header">
+    <h2>UPSC Prelims Control</h2>
+    <div id="authStatus">🔴 Not logged in</div>
+  </header>
 
-<main id="viewContainer"></main>
+  <!-- MAIN CONTENT -->
+  <main id="viewContainer">
+    <!-- Daily plan renders here -->
+  </main>
 
-<nav class="bottom-nav">
-  <button onclick="showView('today')">Today</button>
-  <button onclick="showView('plan')">Plan</button>
-  <button onclick="showView('checkin')">Check-in</button>
-  <button onclick="showView('analytics')">Analytics</button>
-  <button onclick="login()">Login</button>
-  <button onclick="enableNotifications()">Notify</button>
-</nav>
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="bottom-nav">
+    <button onclick="showView('today')">Today</button>
+    <button onclick="showView('plan')">Plan</button>
+    <button onclick="showView('checkin')">Check-in</button>
+    <button onclick="showView('analytics')">Analytics</button>
+    <button onclick="login()">Login</button>
+    <button onclick="enableNotifications()">Notify</button>
+  </nav>
 
-<script type="module" src="syllabus.js"></script>
-<script type="module" src="firebase.js"></script>
-<script type="module" src="app.js"></script>
+  <!-- SCRIPTS (ORDER MATTERS) -->
+  <script type="module" src="syllabus.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="app.js"></script>
 
 </body>
 </html>
