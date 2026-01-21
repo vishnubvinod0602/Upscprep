@@ -132,8 +132,16 @@ function renderToday() {
 
   todaySubjects().forEach(subject => {
     if (!SYLLABUS[subject]) return;
-    const next = getNextChapter(subject);
-    if (!next) return;
+   const next = getNextChapter(subject);
+if (!next) {
+  v.innerHTML += `
+    <div class="card">
+      <b>${subject}</b><br>
+      ✅ All chapters completed / Not loaded yet
+    </div>
+  `;
+  return;
+}
 
     v.innerHTML += `
       <div class="card">
