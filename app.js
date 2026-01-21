@@ -10,7 +10,7 @@ import {
 } from "./firebase.js";
 
 /*************************************************
- * 🔐 EXPOSE LOGIN TO HTML
+ * 🔐 EXPOSE FUNCTIONS TO HTML
  *************************************************/
 window.login = firebaseLogin;
 
@@ -21,7 +21,7 @@ let progress = {};
 let uid = null;
 
 /*************************************************
- * SHOW INITIAL LOGIN STATUS
+ * LOGIN STATUS UI
  *************************************************/
 document.addEventListener("DOMContentLoaded", () => {
   const status = document.getElementById("authStatus");
@@ -32,13 +32,13 @@ document.addEventListener("DOMContentLoaded", () => {
  * WEEKLY SCHEDULE
  *************************************************/
 const WEEKLY_SCHEDULE = {
-  0: ["Revision"],
-  1: ["Polity", "Geography"],
-  2: ["History", "Economy"],
-  3: ["Geography", "Environment"],
-  4: ["Polity", "CSAT"],
-  5: ["History", "Science"],
-  6: ["Economy", "Revision"]
+  0: ["Revision"],                 // Sunday
+  1: ["Polity", "Geography"],      // Monday
+  2: ["History", "Economy"],       // Tuesday
+  3: ["Geography", "Environment"], // Wednesday
+  4: ["Polity", "CSAT"],           // Thursday
+  5: ["History", "Science"],       // Friday
+  6: ["Economy", "Revision"]       // Saturday
 };
 
 /*************************************************
@@ -57,24 +57,23 @@ const TRAVEL_DAYS = [
 function todayKey() {
   return new Date().toISOString().split("T")[0];
 }
+
 function isTravelDay() {
   return TRAVEL_DAYS.includes(todayKey());
 }
+
 function todaySubjects() {
   return WEEKLY_SCHEDULE[new Date().getDay()] || [];
 }
 
 /*************************************************
- * 🔐 FIREBASE AUTH LISTENER
+ * 🔐 FIREBASE USER READY
  *************************************************/
 onUserReady(async user => {
   uid = user.uid;
 
-  // ✅ SHOW LOGIN STATUS
   const status = document.getElementById("authStatus");
-  if (status) {
-    status.innerHTML = `🟢 Logged in as <b>${user.email}</b>`;
-  }
+  if (status) status.innerHTML = `🟢 Logged in as <b>${user.email}</b>`;
 
   progress = await loadProgress(uid);
   localStorage.setItem("progress", JSON.stringify(progress));
@@ -85,20 +84,28 @@ onUserReady(async user => {
 });
 
 /*************************************************
- * CORE STUDY LOGIC
+ * CORE LOGIC
  *************************************************/
 function getNextChapter(subject) {
   const done = progress[subject] || {};
   const blocks = SYLLABUS[subject];
-  for (const type in blocks)
-    for (const book in blocks[type])
-      for (const ch of blocks[type][book])
+  if (!blocks) return null;
+
+  for (const type in blocks) {
+    for (const book in blocks[type]) {
+      const chapters = blocks[type][book];
+      if (!Array.isArray(chapters)) continue;
+
+      for (const ch of chapters) {
         if (!done[ch]) return ch;
+      }
+    }
+  }
   return null;
 }
 
 /*************************************************
- * ✅ markDone ATTACHED TO window
+ * ✅ markDone EXPOSED
  *************************************************/
 window.markDone = function (subject, chapter) {
   progress[subject] = progress[subject] || {};
@@ -114,6 +121,7 @@ window.markDone = function (subject, chapter) {
 
   localStorage.setItem("progress", JSON.stringify(progress));
   if (uid) saveProgress(uid, progress);
+
   renderToday();
 };
 
@@ -123,31 +131,58 @@ window.markDone = function (subject, chapter) {
 function renderToday() {
   const v = document.getElementById("viewContainer");
   v.innerHTML = "<h3>Today’s Plan</h3>";
+
   console.log("Rendering Today", todaySubjects(), SYLLABUS);
 
   if (isTravelDay()) {
-    v.innerHTML += `<div class="card"><b>Travel Day</b><br>Light reading only.</div>`;
+    v.innerHTML += `
+      <div class="card">
+        <b>Travel Day</b><br>
+        Light reading / revision only.
+      </div>
+    `;
     return;
   }
 
-  todaySubjects().forEach(subject => {
-    if (!SYLLABUS[subject]) return;
-   const next = getNextChapter(subject);
-if (!next) {
-  v.innerHTML += `
-    <div class="card">
-      <b>${subject}</b><br>
-      ✅ All chapters completed / Not loaded yet
-    </div>
-  `;
-  return;
-}
+  const subjects = todaySubjects();
+
+  if (!subjects.length) {
+    v.innerHTML += `<div class="card">No subjects scheduled.</div>`;
+    return;
+  }
+
+  subjects.forEach(subject => {
+    if (!SYLLABUS[subject]) {
+      v.innerHTML += `
+        <div class="card">
+          <b>${subject}</b><br>
+          ❌ Syllabus not loaded
+        </div>
+      `;
+      return;
+    }
+
+    const next = getNextChapter(subject);
+
+    if (!next) {
+      v.innerHTML += `
+        <div class="card">
+          <b>${subject}</b><br>
+          ✅ All chapters completed / next phase
+        </div>
+      `;
+      return;
+    }
 
     v.innerHTML += `
       <div class="card">
-        <b>${subject}</b><br>${next}<br>
-        <button class="done" onclick="markDone('${subject}','${next}')">Done</button>
-      </div>`;
+        <b>${subject}</b><br>
+        ${next}<br>
+        <button class="done" onclick="markDone('${subject}','${next}')">
+          Done
+        </button>
+      </div>
+    `;
   });
 }
 
@@ -164,30 +199,35 @@ function renderCheckin() {
 function renderAnalytics() {
   const v = document.getElementById("viewContainer");
   v.innerHTML = "<h3>Analytics</h3>";
-  Object.keys(progress).forEach(s => {
-    v.innerHTML += `<div class="card">${s}: ${Object.keys(progress[s]).length} chapters</div>`;
+
+  Object.keys(progress).forEach(subject => {
+    v.innerHTML += `
+      <div class="card">
+        ${subject}: ${Object.keys(progress[subject]).length} chapters completed
+      </div>
+    `;
   });
 }
 
 /*************************************************
  * NAVIGATION
  *************************************************/
-window.showView = v => {
-  if (v === "today") renderToday();
-  if (v === "plan") renderPlan();
-  if (v === "checkin") renderCheckin();
-  if (v === "analytics") renderAnalytics();
+window.showView = view => {
+  if (view === "today") renderToday();
+  if (view === "plan") renderPlan();
+  if (view === "checkin") renderCheckin();
+  if (view === "analytics") renderAnalytics();
 };
 
 /*************************************************
  * 🔔 NOTIFICATIONS
  *************************************************/
-function getDelayTill(h) {
-  const n = new Date();
-  const t = new Date();
-  t.setHours(h, 0, 0, 0);
-  if (t <= n) t.setDate(t.getDate() + 1);
-  return t - n;
+function getDelayTill(hour) {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(hour, 0, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+  return target - now;
 }
 
 window.enableNotifications = async () => {
@@ -207,23 +247,30 @@ function scheduleSubjectReminder() {
 function getDueRevisions() {
   const due = [];
   const today = new Date();
-  Object.keys(progress).forEach(s => {
-    Object.keys(progress[s]).forEach(c => {
-      const e = progress[s][c];
-      const days = (today - new Date(e.firstDone)) / 86400000;
+
+  Object.keys(progress).forEach(subject => {
+    Object.keys(progress[subject]).forEach(ch => {
+      const entry = progress[subject][ch];
+      const days =
+        (today - new Date(entry.firstDone)) / 86400000;
+
       if (
-        (e.revisions === 1 && days >= 1) ||
-        (e.revisions === 2 && days >= 7) ||
-        (e.revisions === 3 && days >= 30)
-      ) due.push(`${s}: ${c}`);
+        (entry.revisions === 1 && days >= 1) ||
+        (entry.revisions === 2 && days >= 7) ||
+        (entry.revisions === 3 && days >= 30)
+      ) {
+        due.push(`${subject}: ${ch}`);
+      }
     });
   });
+
   return due;
 }
 
 function scheduleRevisionAlert() {
   const due = getDueRevisions();
   if (!due.length) return;
+
   setTimeout(() => {
     new Notification("Revision Due", {
       body: due.slice(0, 5).join(", ")
