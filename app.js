@@ -10,10 +10,9 @@ import {
 } from "./firebase.js";
 
 /*************************************************
- * 🔐 EXPOSE FUNCTIONS TO HTML (CRITICAL)
+ * 🔐 EXPOSE LOGIN TO HTML
  *************************************************/
 window.login = firebaseLogin;
-console.log("LOGIN FUNCTION ATTACHED");
 
 /*************************************************
  * STATE
@@ -22,16 +21,24 @@ let progress = {};
 let uid = null;
 
 /*************************************************
+ * SHOW INITIAL LOGIN STATUS
+ *************************************************/
+document.addEventListener("DOMContentLoaded", () => {
+  const status = document.getElementById("authStatus");
+  if (status) status.innerHTML = "🔴 Not logged in";
+});
+
+/*************************************************
  * WEEKLY SCHEDULE
  *************************************************/
 const WEEKLY_SCHEDULE = {
-  0: ["Revision"],                 // Sunday
-  1: ["Polity", "Geography"],      // Monday
-  2: ["History", "Economy"],       // Tuesday
-  3: ["Geography", "Environment"], // Wednesday
-  4: ["Polity", "CSAT"],           // Thursday
-  5: ["History", "Science"],       // Friday
-  6: ["Economy", "Revision"]       // Saturday
+  0: ["Revision"],
+  1: ["Polity", "Geography"],
+  2: ["History", "Economy"],
+  3: ["Geography", "Environment"],
+  4: ["Polity", "CSAT"],
+  5: ["History", "Science"],
+  6: ["Economy", "Revision"]
 };
 
 /*************************************************
@@ -50,22 +57,28 @@ const TRAVEL_DAYS = [
 function todayKey() {
   return new Date().toISOString().split("T")[0];
 }
-
 function isTravelDay() {
   return TRAVEL_DAYS.includes(todayKey());
 }
-
 function todaySubjects() {
   return WEEKLY_SCHEDULE[new Date().getDay()] || [];
 }
 
 /*************************************************
- * FIREBASE USER LOAD
+ * 🔐 FIREBASE AUTH LISTENER
  *************************************************/
 onUserReady(async user => {
   uid = user.uid;
+
+  // ✅ SHOW LOGIN STATUS
+  const status = document.getElementById("authStatus");
+  if (status) {
+    status.innerHTML = `🟢 Logged in as <b>${user.email}</b>`;
+  }
+
   progress = await loadProgress(uid);
   localStorage.setItem("progress", JSON.stringify(progress));
+
   showView("today");
   scheduleSubjectReminder();
   scheduleRevisionAlert();
@@ -77,19 +90,15 @@ onUserReady(async user => {
 function getNextChapter(subject) {
   const done = progress[subject] || {};
   const blocks = SYLLABUS[subject];
-
-  for (const type in blocks) {
-    for (const book in blocks[type]) {
-      for (const ch of blocks[type][book]) {
+  for (const type in blocks)
+    for (const book in blocks[type])
+      for (const ch of blocks[type][book])
         if (!done[ch]) return ch;
-      }
-    }
-  }
   return null;
 }
 
 /*************************************************
- * ✅ FIX: markDone ATTACHED TO window
+ * ✅ markDone ATTACHED TO window
  *************************************************/
 window.markDone = function (subject, chapter) {
   progress[subject] = progress[subject] || {};
@@ -108,8 +117,6 @@ window.markDone = function (subject, chapter) {
   renderToday();
 };
 
-console.log("markDone attached to window");
-
 /*************************************************
  * VIEWS
  *************************************************/
@@ -118,37 +125,20 @@ function renderToday() {
   v.innerHTML = "<h3>Today’s Plan</h3>";
 
   if (isTravelDay()) {
-    v.innerHTML += `
-      <div class="card">
-        <b>Travel Day</b><br>
-        Light reading / revision only.
-      </div>
-    `;
+    v.innerHTML += `<div class="card"><b>Travel Day</b><br>Light reading only.</div>`;
     return;
   }
 
-  const subjects = todaySubjects();
-
-  if (subjects.length === 0) {
-    v.innerHTML += `<div class="card">No subjects scheduled.</div>`;
-    return;
-  }
-
-  subjects.forEach(subject => {
+  todaySubjects().forEach(subject => {
     if (!SYLLABUS[subject]) return;
-
     const next = getNextChapter(subject);
     if (!next) return;
 
     v.innerHTML += `
       <div class="card">
-        <b>${subject}</b><br>
-        ${next}<br>
-        <button class="done" onclick="markDone('${subject}','${next}')">
-          Done
-        </button>
-      </div>
-    `;
+        <b>${subject}</b><br>${next}<br>
+        <button class="done" onclick="markDone('${subject}','${next}')">Done</button>
+      </div>`;
   });
 }
 
@@ -165,41 +155,34 @@ function renderCheckin() {
 function renderAnalytics() {
   const v = document.getElementById("viewContainer");
   v.innerHTML = "<h3>Analytics</h3>";
-
-  Object.keys(progress).forEach(subject => {
-    v.innerHTML += `
-      <div class="card">
-        ${subject}: ${Object.keys(progress[subject]).length} chapters completed
-      </div>
-    `;
+  Object.keys(progress).forEach(s => {
+    v.innerHTML += `<div class="card">${s}: ${Object.keys(progress[s]).length} chapters</div>`;
   });
 }
 
 /*************************************************
  * NAVIGATION
  *************************************************/
-window.showView = view => {
-  if (view === "today") renderToday();
-  if (view === "plan") renderPlan();
-  if (view === "checkin") renderCheckin();
-  if (view === "analytics") renderAnalytics();
+window.showView = v => {
+  if (v === "today") renderToday();
+  if (v === "plan") renderPlan();
+  if (v === "checkin") renderCheckin();
+  if (v === "analytics") renderAnalytics();
 };
 
 /*************************************************
  * 🔔 NOTIFICATIONS
  *************************************************/
-function getDelayTill(hour) {
-  const now = new Date();
-  const target = new Date();
-  target.setHours(hour, 0, 0, 0);
-  if (target <= now) target.setDate(target.getDate() + 1);
-  return target - now;
+function getDelayTill(h) {
+  const n = new Date();
+  const t = new Date();
+  t.setHours(h, 0, 0, 0);
+  if (t <= n) t.setDate(t.getDate() + 1);
+  return t - n;
 }
 
 window.enableNotifications = async () => {
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") return;
-
+  if (await Notification.requestPermission() !== "granted") return;
   scheduleSubjectReminder();
   scheduleRevisionAlert();
 };
@@ -215,30 +198,23 @@ function scheduleSubjectReminder() {
 function getDueRevisions() {
   const due = [];
   const today = new Date();
-
-  Object.keys(progress).forEach(subject => {
-    Object.keys(progress[subject]).forEach(ch => {
-      const entry = progress[subject][ch];
-      const days =
-        (today - new Date(entry.firstDone)) / (1000 * 60 * 60 * 24);
-
+  Object.keys(progress).forEach(s => {
+    Object.keys(progress[s]).forEach(c => {
+      const e = progress[s][c];
+      const days = (today - new Date(e.firstDone)) / 86400000;
       if (
-        (entry.revisions === 1 && days >= 1) ||
-        (entry.revisions === 2 && days >= 7) ||
-        (entry.revisions === 3 && days >= 30)
-      ) {
-        due.push(`${subject}: ${ch}`);
-      }
+        (e.revisions === 1 && days >= 1) ||
+        (e.revisions === 2 && days >= 7) ||
+        (e.revisions === 3 && days >= 30)
+      ) due.push(`${s}: ${c}`);
     });
   });
-
   return due;
 }
 
 function scheduleRevisionAlert() {
   const due = getDueRevisions();
   if (!due.length) return;
-
   setTimeout(() => {
     new Notification("Revision Due", {
       body: due.slice(0, 5).join(", ")
