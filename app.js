@@ -126,7 +126,7 @@ window.markDone = function (subject, chapter) {
 function renderToday() {
 
   // 🔴 CRITICAL DIAGNOSTIC LINE
-  alert("RENDERING TODAY");
+//  alert("RENDERING TODAY");
 
   const v = document.getElementById("viewContainer");
   v.innerHTML = "<h3>Today’s Plan</h3>";
