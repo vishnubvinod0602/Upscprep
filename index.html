@@ -2,30 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>UPSC Prelims Control</title>
+  <title>UPSC Prep Control</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-  <header class="header">
-    <h2>UPSC Prelims Control</h2>
-    <div id="authStatus">🔴 Not logged in</div>
-  </header>
+<!-- AUTH STATUS -->
+<div id="authBox"></div>
 
-  <main id="viewContainer">
-    <!-- Content will be injected here -->
-  </main>
+<nav>
+  <button onclick="showView('today')">Today</button>
+  <button onclick="showView('analytics')">Analytics</button>
+</nav>
 
-  <nav class="bottom-nav">
-    <button id="btnToday" type="button">Today</button>
-    <button id="btnLogin" type="button">Login</button>
-  </nav>
+<div id="viewContainer"></div>
 
-  <!-- 🔴 IMPORTANT: RELATIVE PATH -->
-  <script src="./app.js"></script>
+<div class="footer">
+  <button id="btnPomodoro">Start Focus (25 min)</button>
+  <div id="timerDisplay"></div>
+</div>
 
+<script type="module" src="app.js"></script>
 </body>
 </html>

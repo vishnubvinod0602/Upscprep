@@ -1,36 +1,50 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDvjioLErGsYSRjVj_pTv0Mp7OO-5-q96A",
+  apiKey: "YOUR_API_KEY",
   authDomain: "upsprepvishnu.firebaseapp.com",
   projectId: "upsprepvishnu",
   storageBucket: "upsprepvishnu.appspot.com",
-  messagingSenderId: "145016146692",
-  appId: "1:145016146692:web:4e850de02df8dbe72e5e51"
+  messagingSenderId: "XXXX",
+  appId: "XXXX"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+
 const provider = new GoogleAuthProvider();
 
-export function login() {
-  signInWithPopup(auth, provider);
+export function loginWithGoogle() {
+  signInWithRedirect(auth, provider);
 }
 
-export function onUserReady(cb) {
-  onAuthStateChanged(auth, user => {
-    if (user) cb(user);
-  });
+export async function handleRedirect() {
+  try {
+    await getRedirectResult(auth);
+  } catch (e) {
+    console.error("Auth redirect error:", e);
+  }
 }
 
-export async function loadProgress(uid) {
-  const snap = await getDoc(doc(db, "users", uid));
-  return snap.exists() ? snap.data().progress || {} : {};
+export function onAuthReady(cb) {
+  onAuthStateChanged(auth, cb);
 }
 
-export async function saveProgress(uid, progress) {
-  await setDoc(doc(db, "users", uid), { progress }, { merge: true });
+export function logout() {
+  signOut(auth);
+}
+
+export function getUID() {
+  return auth.currentUser?.uid;
 }

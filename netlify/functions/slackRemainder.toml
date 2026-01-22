@@ -1,0 +1,2 @@
+[functions."slackReminder"]
+schedule = "30 1 * * *"
