@@ -10,12 +10,15 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  const firebaseConfig = {
+  apiKey: "AIzaSyDvjioLErGsYSRjVj_pTv0Mp7OO-5-q96A",
   authDomain: "upsprepvishnu.firebaseapp.com",
   projectId: "upsprepvishnu",
-  storageBucket: "upsprepvishnu.appspot.com",
-  messagingSenderId: "XXXX",
-  appId: "XXXX"
+  storageBucket: "upsprepvishnu.firebasestorage.app",
+  messagingSenderId: "145016146692",
+  appId: "1:145016146692:web:4e850de02df8dbe72e5e51"
+};
+
 };
 
 const app = initializeApp(firebaseConfig);
