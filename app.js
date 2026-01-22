@@ -1,13 +1,13 @@
 import { SYLLABUS } from "./syllabus.js";
 
-/*************************************************
- * STATE
- *************************************************/
+/* ===============================
+   STATE
+================================ */
 let progress = JSON.parse(localStorage.getItem("progress")) || {};
 
-/*************************************************
- * SCHEDULE
- *************************************************/
+/* ===============================
+   WEEKLY SCHEDULE
+================================ */
 const WEEKLY_SCHEDULE = {
   0: ["Revision"],
   1: ["Polity", "Geography"],
@@ -18,9 +18,9 @@ const WEEKLY_SCHEDULE = {
   6: ["Economy", "Revision"]
 };
 
-/*************************************************
- * HELPERS
- *************************************************/
+/* ===============================
+   HELPERS
+================================ */
 function todaySubjects() {
   return WEEKLY_SCHEDULE[new Date().getDay()] || [];
 }
@@ -33,6 +33,8 @@ function getNextChapter(subject) {
   for (const type in blocks) {
     for (const book in blocks[type]) {
       const chapters = blocks[type][book];
+      if (!Array.isArray(chapters)) continue;
+
       for (const ch of chapters) {
         if (!done[ch]) return ch;
       }
@@ -41,14 +43,21 @@ function getNextChapter(subject) {
   return null;
 }
 
-/*************************************************
- * RENDER TODAY
- *************************************************/
+/* ===============================
+   RENDER TODAY
+================================ */
 function renderToday() {
   const v = document.getElementById("viewContainer");
+
+  console.log("Rendering Today View");
   v.innerHTML = "<h3>Today’s Plan</h3>";
 
   const subjects = todaySubjects();
+
+  if (!subjects.length) {
+    v.innerHTML += "<p>No subjects scheduled today.</p>";
+    return;
+  }
 
   subjects.forEach(subject => {
     const next = getNextChapter(subject);
@@ -62,24 +71,39 @@ function renderToday() {
   });
 }
 
-/*************************************************
- * LOGIN (DUMMY FOR NOW)
- *************************************************/
+/* ===============================
+   LOGIN (TEMP / LOCAL)
+================================ */
 function login() {
-  document.getElementById("authStatus").innerText = "🟢 Logged in (local)";
+  const status = document.getElementById("authStatus");
+  status.innerText = "🟢 Logged in (local test)";
 }
 
-/*************************************************
- * EVENT BINDING (IMPORTANT)
- *************************************************/
+/* ===============================
+   EVENT BINDING (CRITICAL)
+================================ */
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM loaded");
 
-  document.getElementById("btnToday")
-    .addEventListener("click", renderToday);
+  const todayBtn = document.getElementById("btnToday");
+  const loginBtn = document.getElementById("btnLogin");
 
-  document.getElementById("btnLogin")
-    .addEventListener("click", login);
+  console.log("Buttons:", todayBtn, loginBtn);
 
-  // Auto-load Today view
+  if (todayBtn) {
+    todayBtn.addEventListener("click", () => {
+      console.log("Today button clicked");
+      renderToday();
+    });
+  }
+
+  if (loginBtn) {
+    loginBtn.addEventListener("click", () => {
+      console.log("Login button clicked");
+      login();
+    });
+  }
+
+  // Initial render
   renderToday();
 });

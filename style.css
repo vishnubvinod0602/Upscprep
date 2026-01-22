@@ -21,3 +21,20 @@ body {
   margin: 12px 0;
   border: 2px solid red;
 }
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  border-top: 1px solid #ccc;
+  z-index: 1000;           /* 🔥 REQUIRED */
+}
+
+.bottom-nav button {
+  pointer-events: auto;   /* 🔥 REQUIRED */
+}
