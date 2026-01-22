@@ -1,14 +1,16 @@
-import { SYLLABUS } from "./syllabus.js";
+// 🔴 ABSOLUTE PROOF THIS FILE IS LOADED
+console.log("APP.JS LOADED");
+alert("APP.JS LOADED");
 
-/* ===============================
-   STATE
-================================ */
-let progress = JSON.parse(localStorage.getItem("progress")) || {};
+// ==============================
+// BASIC STATE
+// ==============================
+var progress = JSON.parse(localStorage.getItem("progress")) || {};
 
-/* ===============================
-   WEEKLY SCHEDULE
-================================ */
-const WEEKLY_SCHEDULE = {
+// ==============================
+// WEEKLY SCHEDULE
+// ==============================
+var WEEKLY_SCHEDULE = {
   0: ["Revision"],
   1: ["Polity", "Geography"],
   2: ["History", "Economy"],
@@ -18,92 +20,70 @@ const WEEKLY_SCHEDULE = {
   6: ["Economy", "Revision"]
 };
 
-/* ===============================
-   HELPERS
-================================ */
+// ==============================
+// SYLLABUS (TEMP INLINE)
+// ==============================
+var SYLLABUS = {
+  Polity: ["Constitution", "Fundamental Rights"],
+  CSAT: ["Reading Comprehension", "Quantitative Aptitude"]
+};
+
+// ==============================
+// HELPERS
+// ==============================
 function todaySubjects() {
   return WEEKLY_SCHEDULE[new Date().getDay()] || [];
 }
 
-function getNextChapter(subject) {
-  const done = progress[subject] || {};
-  const blocks = SYLLABUS[subject];
-  if (!blocks) return null;
-
-  for (const type in blocks) {
-    for (const book in blocks[type]) {
-      const chapters = blocks[type][book];
-      if (!Array.isArray(chapters)) continue;
-
-      for (const ch of chapters) {
-        if (!done[ch]) return ch;
-      }
-    }
-  }
-  return null;
-}
-
-/* ===============================
-   RENDER TODAY
-================================ */
+// ==============================
+// RENDER TODAY
+// ==============================
 function renderToday() {
-  const v = document.getElementById("viewContainer");
+  console.log("Rendering Today");
 
-  console.log("Rendering Today View");
-  v.innerHTML = "<h3>Today’s Plan</h3>";
+  var container = document.getElementById("viewContainer");
+  container.innerHTML = "<h3>Today’s Plan</h3>";
 
-  const subjects = todaySubjects();
+  var subjects = todaySubjects();
 
-  if (!subjects.length) {
-    v.innerHTML += "<p>No subjects scheduled today.</p>";
-    return;
-  }
-
-  subjects.forEach(subject => {
-    const next = getNextChapter(subject);
-
-    v.innerHTML += `
+  subjects.forEach(function (subject) {
+    var chapters = SYLLABUS[subject] || ["No syllabus"];
+    container.innerHTML += `
       <div class="card">
         <b>${subject}</b><br>
-        ${next || "All chapters completed"}
+        ${chapters[0]}
       </div>
     `;
   });
 }
 
-/* ===============================
-   LOGIN (TEMP / LOCAL)
-================================ */
+// ==============================
+// LOGIN (DUMMY)
+// ==============================
 function login() {
-  const status = document.getElementById("authStatus");
-  status.innerText = "🟢 Logged in (local test)";
+  document.getElementById("authStatus").innerText =
+    "🟢 Logged in (test)";
 }
 
-/* ===============================
-   EVENT BINDING (CRITICAL)
-================================ */
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM loaded");
+// ==============================
+// EVENT BINDING
+// ==============================
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("DOM LOADED");
 
-  const todayBtn = document.getElementById("btnToday");
-  const loginBtn = document.getElementById("btnLogin");
+  var todayBtn = document.getElementById("btnToday");
+  var loginBtn = document.getElementById("btnLogin");
 
-  console.log("Buttons:", todayBtn, loginBtn);
+  todayBtn.addEventListener("click", function () {
+    console.log("TODAY CLICKED");
+    renderToday();
+  });
 
-  if (todayBtn) {
-    todayBtn.addEventListener("click", () => {
-      console.log("Today button clicked");
-      renderToday();
-    });
-  }
+  loginBtn.addEventListener("click", function () {
+    console.log("LOGIN CLICKED");
+    login();
+  });
 
-  if (loginBtn) {
-    loginBtn.addEventListener("click", () => {
-      console.log("Login button clicked");
-      login();
-    });
-  }
-
-  // Initial render
+  // Auto render
   renderToday();
 });
