@@ -1,5 +1,6 @@
+// firebase.js
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 import {
   getAuth,
   GoogleAuthProvider,
@@ -8,31 +9,39 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
+/* 🔴 REPLACE VALUES FROM FIREBASE CONSOLE */
 const firebaseConfig = {
-  const firebaseConfig = {
-  apiKey: "AIzaSyDvjioLErGsYSRjVj_pTv0Mp7OO-5-q96A",
+  apiKey: "PASTE_API_KEY_HERE",
   authDomain: "upsprepvishnu.firebaseapp.com",
   projectId: "upsprepvishnu",
-  storageBucket: "upsprepvishnu.firebasestorage.app",
-  messagingSenderId: "145016146692",
-  appId: "1:145016146692:web:4e850de02df8dbe72e5e51"
+  storageBucket: "upsprepvishnu.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID_HERE",
+  appId: "PASTE_APP_ID_HERE"
 };
 
+/* INIT */
 const app = initializeApp(firebaseConfig);
 
-export const db = getFirestore(app);
+/* SERVICES */
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 
+/* PROVIDER */
 const provider = new GoogleAuthProvider();
 
+/* AUTH HELPERS */
 export function loginWithGoogle() {
   signInWithRedirect(auth, provider);
 }
 
 export async function handleRedirect() {
-  try { await getRedirectResult(auth); }
-  catch (e) { console.error(e); }
+  try {
+    await getRedirectResult(auth);
+  } catch (e) {
+    console.error("Redirect error:", e);
+  }
 }
 
 export function onAuthReady(cb) {
@@ -44,5 +53,5 @@ export function logout() {
 }
 
 export function getUID() {
-  return auth.currentUser?.uid;
+  return auth.currentUser ? auth.currentUser.uid : null;
 }
