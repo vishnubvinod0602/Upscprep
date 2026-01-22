@@ -13,7 +13,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/12.8.0/firebase
 
 /* 🔴 REPLACE VALUES FROM FIREBASE CONSOLE */
 const firebaseConfig = {
-  apiKey: "PASTE_API_KEY_HERE",
+  apiKey: "AIzaSyDvjioLErGsYSRjVj_pTv0Mp7OO-5-q96A",
   authDomain: "upsprepvishnu.firebaseapp.com",
   projectId: "upsprepvishnu",
   storageBucket: "upsprepvishnu.appspot.com",
