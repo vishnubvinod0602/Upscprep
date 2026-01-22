@@ -3,33 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <title>UPSC Prelims Control</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#4f46e5" />
 
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
 </head>
 
 <body>
-
- <body>
 
   <header class="header">
     <h2>UPSC Prelims Control</h2>
     <div id="authStatus">🔴 Not logged in</div>
   </header>
 
-  <!-- THIS IS CRITICAL -->
-  <main id="viewContainer"></main>
+  <!-- MAIN CONTENT -->
+  <main id="viewContainer">
+    <!-- Daily plan will render here -->
+  </main>
 
+  <!-- BOTTOM NAVIGATION -->
   <nav class="bottom-nav">
-    <button onclick="showView('today')">Today</button>
-    <button onclick="login()">Login</button>
+    <button id="btnToday">Today</button>
+    <button id="btnLogin">Login</button>
   </nav>
+
+  <!-- MAIN SCRIPT -->
+  <script type="module" src="app.js"></script>
 
 </body>
 </html>
