@@ -19,8 +19,6 @@ const firebaseConfig = {
   appId: "1:145016146692:web:4e850de02df8dbe72e5e51"
 };
 
-};
-
 const app = initializeApp(firebaseConfig);
 
 export const db = getFirestore(app);
@@ -33,11 +31,8 @@ export function loginWithGoogle() {
 }
 
 export async function handleRedirect() {
-  try {
-    await getRedirectResult(auth);
-  } catch (e) {
-    console.error("Auth redirect error:", e);
-  }
+  try { await getRedirectResult(auth); }
+  catch (e) { console.error(e); }
 }
 
 export function onAuthReady(cb) {

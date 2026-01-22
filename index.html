@@ -8,19 +8,25 @@
 </head>
 <body>
 
-<!-- AUTH STATUS -->
-<div id="authBox"></div>
+<div class="app-container">
 
-<nav>
-  <button onclick="showView('today')">Today</button>
-  <button onclick="showView('analytics')">Analytics</button>
-</nav>
+  <header class="app-header">
+    <h1>UPSC Prep Control</h1>
+    <div id="authBox" class="auth-box"></div>
+  </header>
 
-<div id="viewContainer"></div>
+  <nav class="app-nav">
+    <button id="btnToday" class="nav-btn active">Today</button>
+    <button id="btnAnalytics" class="nav-btn">Analytics</button>
+  </nav>
 
-<div class="footer">
-  <button id="btnPomodoro">Start Focus (25 min)</button>
-  <div id="timerDisplay"></div>
+  <main id="viewContainer" class="content"></main>
+
+  <footer class="app-footer">
+    <button id="btnPomodoro" class="focus-btn">🎯 Start 25-min Focus</button>
+    <div id="timerDisplay" class="timer"></div>
+  </footer>
+
 </div>
 
 <script type="module" src="app.js"></script>

@@ -1,5 +1,91 @@
-body { font-family: system-ui; padding: 12px; }
-nav button { margin-right: 8px; }
-.card { background: #f1f5f9; padding: 10px; margin: 8px 0; border-radius: 8px; }
-.alert { background: #e0f2fe; padding: 10px; margin-bottom: 10px; border-radius: 8px; }
-.footer { margin-top: 20px; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.app-container {
+  max-width: 720px;
+  margin: auto;
+  padding: 16px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.app-header h1 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.auth-box {
+  font-size: 14px;
+}
+
+.app-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.nav-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #e2e8f0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.nav-btn.active {
+  background: #2563eb;
+  color: white;
+}
+
+.content {
+  min-height: 300px;
+}
+
+.card {
+  background: white;
+  padding: 14px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.alert {
+  background: #e0f2fe;
+  color: #075985;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.app-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.focus-btn {
+  padding: 12px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  background: #16a34a;
+  color: white;
+  cursor: pointer;
+}
+
+.timer {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #334155;
+}

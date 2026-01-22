@@ -8,75 +8,28 @@ import {
 } from "./firebase.js";
 
 import {
-  doc,
-  setDoc,
-  getDoc
+  doc, setDoc, getDoc
 } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 import { db } from "./firebase.js";
 
-/* ================= AUTH UI ================= */
+/* ---------- AUTH UI ---------- */
 
 const authBox = document.getElementById("authBox");
 
 function renderLogin() {
-  authBox.innerHTML = `
-    <button id="googleLogin">🔐 Login with Google</button>
-  `;
+  authBox.innerHTML = `<button id="googleLogin">🔐 Login with Google</button>`;
   document.getElementById("googleLogin").onclick = loginWithGoogle;
 }
 
 function renderUser(user) {
-  authBox.innerHTML = `
-    ✅ ${user.email}
-    <button id="logoutBtn">Logout</button>
-  `;
+  authBox.innerHTML = `✅ ${user.email} <button id="logoutBtn">Logout</button>`;
   document.getElementById("logoutBtn").onclick = logout;
 }
 
-/* ================= APP STATE ================= */
-
-let appIsActive = true;
-let reminderShown = false;
-
-/* ================= APP VISIBILITY ================= */
-
-document.addEventListener("visibilitychange", async () => {
-  appIsActive = document.visibilityState === "visible";
-  reminderShown = false;
-
-  const uid = getUID();
-  if (!uid) return;
-
-  await setDoc(
-    doc(db, "system", "status"),
-    {
-      appActive: appIsActive,
-      lastActive: new Date().toISOString()
-    },
-    { merge: true }
-  );
-});
-
-/* ================= ALERT ================= */
-
-function showAlert(message) {
-  if (appIsActive && reminderShown) return;
-
-  const container = document.getElementById("viewContainer");
-  const div = document.createElement("div");
-  div.className = "alert";
-  div.innerText = message;
-
-  container.prepend(div);
-  reminderShown = true;
-
-  setTimeout(() => div.remove(), 6000);
-}
-
-/* ================= SCHEDULE ================= */
+/* ---------- SCHEDULE ---------- */
 
 const BASE_WEEK = {
-  0: ["REVISION"], // Sunday
+  0: ["REVISION"],
   1: ["Polity", "Geography"],
   2: ["History", "Economy"],
   3: ["Geography", "Environment"],
@@ -86,126 +39,110 @@ const BASE_WEEK = {
 };
 
 function todaySubjects() {
-  const day = new Date().getDay();
-  return day === 0 ? ["REVISION"] : BASE_WEEK[day];
+  const d = new Date().getDay();
+  return d === 0 ? ["REVISION"] : BASE_WEEK[d];
 }
 
-/* ================= TODAY VIEW ================= */
+/* ---------- UI HELPERS ---------- */
+
+function showAlert(msg) {
+  const c = document.getElementById("viewContainer");
+  const d = document.createElement("div");
+  d.className = "alert";
+  d.innerText = msg;
+  c.prepend(d);
+  setTimeout(() => d.remove(), 5000);
+}
+
+/* ---------- VIEWS ---------- */
 
 async function renderToday() {
-  const view = document.getElementById("viewContainer");
-  view.innerHTML = "<h3>Today</h3>";
+  const v = document.getElementById("viewContainer");
+  v.innerHTML = "<h3>Today</h3>";
 
   const subjects = todaySubjects();
   const uid = getUID();
 
-  await setDoc(
-    doc(db, "system", "status"),
-    { todaySubjects: subjects },
-    { merge: true }
-  );
+  await setDoc(doc(db, "system", "status"), { todaySubjects: subjects }, { merge: true });
 
   if (subjects.includes("REVISION")) {
-    showAlert("🔁 Sunday: Revision + PYQs only");
-    view.innerHTML += `<div class="card">Revise last week & solve PYQs</div>`;
+    v.innerHTML += `<div class="card">Sunday: Revision + PYQs</div>`;
     return;
   }
 
-  subjects.forEach(sub => {
-    view.innerHTML += `<div class="card"><b>${sub}</b></div>`;
-  });
+  subjects.forEach(s => v.innerHTML += `<div class="card">${s}</div>`);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0,10);
   const snap = await getDoc(doc(db, "users", uid, "checkins", today));
 
   if (!snap.exists()) {
-    view.innerHTML += `
+    v.innerHTML += `
       <div class="card">
-        <b>Daily Check-in</b><br><br>
-        <button onclick="markCheckin('done')">✅ Done</button>
-        <button onclick="markCheckin('missed')">❌ Missed</button>
-      </div>
-    `;
+        <button id="doneBtn">✅ Done</button>
+        <button id="missedBtn">❌ Missed</button>
+      </div>`;
+    document.getElementById("doneBtn").onclick = () => markCheckin("done");
+    document.getElementById("missedBtn").onclick = () => markCheckin("missed");
   } else {
-    view.innerHTML += `
-      <div class="card">
-        Check-in recorded: <b>${snap.data().status}</b>
-      </div>
-    `;
+    v.innerHTML += `<div class="card">Check-in: ${snap.data().status}</div>`;
   }
 }
 
-/* ================= CHECK-IN ================= */
+function renderAnalytics() {
+  const v = document.getElementById("viewContainer");
+  v.innerHTML = "<h3>Analytics</h3>";
+  Object.keys(SYLLABUS).forEach(s => {
+    v.innerHTML += `<div class="card">${s}</div>`;
+  });
+}
 
-window.markCheckin = async function (status) {
+/* ---------- CHECK-IN ---------- */
+
+async function markCheckin(status) {
   const uid = getUID();
-  const today = new Date().toISOString().slice(0, 10);
+  const date = new Date().toISOString().slice(0,10);
 
-  await setDoc(doc(db, "users", uid, "checkins", today), {
+  await setDoc(doc(db, "users", uid, "checkins", date), {
     status,
     subjects: todaySubjects(),
     timestamp: new Date().toISOString()
   });
 
-  showAlert(
-    status === "done"
-      ? "✅ Check-in saved. Good work."
-      : "❌ Missed today. Reset tomorrow."
-  );
-};
-
-/* ================= ANALYTICS ================= */
-
-function renderAnalytics() {
-  const view = document.getElementById("viewContainer");
-  view.innerHTML = "<h3>Analytics</h3>";
-
-  Object.keys(SYLLABUS).forEach(subject => {
-    view.innerHTML += `<div class="card">${subject}</div>`;
-  });
+  showAlert("Check-in saved");
+  renderToday();
 }
 
-/* ================= POMODORO ================= */
+/* ---------- NAV ---------- */
+
+function attachNav() {
+  document.getElementById("btnToday").onclick = () => renderToday();
+  document.getElementById("btnAnalytics").onclick = () => renderAnalytics();
+}
+
+/* ---------- POMODORO ---------- */
 
 document.getElementById("btnPomodoro").onclick = () => {
-  let time = 25 * 60;
-  const display = document.getElementById("timerDisplay");
-
-  const interval = setInterval(() => {
-    display.innerText = `Focus: ${Math.floor(time / 60)}:${String(
-      time % 60
-    ).padStart(2, "0")}`;
-
-    if (--time < 0) {
-      clearInterval(interval);
-      showAlert("✅ Focus session complete. Take a break.");
+  let t = 25 * 60;
+  const d = document.getElementById("timerDisplay");
+  const i = setInterval(() => {
+    d.innerText = `Focus: ${Math.floor(t/60)}:${String(t%60).padStart(2,"0")}`;
+    if (--t < 0) {
+      clearInterval(i);
+      showAlert("Focus complete");
     }
   }, 1000);
 };
 
-/* ================= NAVIGATION ================= */
-
-function showView(view) {
-  if (view === "today") {
-    renderToday();
-  } else if (view === "analytics") {
-    renderAnalytics();
-  }
-}
-
-window.showView = showView;
-
-/* ================= INIT ================= */
+/* ---------- INIT ---------- */
 
 document.addEventListener("DOMContentLoaded", async () => {
   await handleRedirect();
-
   onAuthReady(user => {
-    if (!user) {
-      renderLogin();
-    } else {
+    if (!user) renderLogin();
+    else {
       renderUser(user);
-      showView("today");
+      attachNav();
+      renderToday();
     }
   });
 });
